@@ -88,8 +88,43 @@ ktg = {
     222: 'single quote'
   },
 
+  _loopUpdateGamepad = true,
+  _gamepadDeadzone = 0.4,
+
+  _genericGamepadCheck: function(gamepadCodes){
+    var axesbuttons = gamepadCodes[0];
+    var n = gamepadCodes[1];
+    var moreless = gamepadCodes[2];
+
+    if(axesbuttons=='axes'){
+      if(moreless == '<'){
+        return function(pad){
+          if (!(typeof pad === "undefined")) {
+            return pad.axes[n] < -ktg._gamepadDeadzone;
+          }
+        };
+      } else {
+        return function(pad){
+          if (!(typeof pad === "undefined")) {
+            return pad.axes[n] > ktg._gamepadDeadzone;
+          }
+        };
+      }
+    } else {
+      return function(pad){
+        if (!(typeof pad === "undefined")) {
+          return !!pad.buttons[n].pressed;
+        }
+      };
+    }
+  },
+
   //128 px width and 16 px height image of each button as 16x16 px image
   _touchButtonsImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAMAAADphoe6AAAAM1BMVEUAAAAiIDQwYII3lG5LaS9ZVlJbbuFjm/9pampqvjB2QoqbrbesMjLZV2PfcSb42wD//qcPQT4sAAAAAXRSTlMAQObYZgAAAYRJREFUeAGllI2OwiAQhBdYsPan9f2f9uw4azMEc2fui6IDJvMVac0m4ftcBLNVMGuC2SGYTQuoy4tpkEGVXGvkcgfud1DWbdtmsJ2s7XbLN4Av7XgIBwVqisLItRPgBHNKSQS8FL8EVjCHQKNBbiGwP2KkQE2XAHOqKsCJEFhUoOD1FtjQTQEYsJ8CGDBCAH0hwCyFJ1QaC/gp4B8EYMD+EDgvfqcA++oJCrgfVyGWqDQWiCEE5pMQeBmgHwIw4BsC6EsABcg0QGECmMD6ExpTwIs/KT4+A6DxMwT2x/4WQB94CaCOIwSu9dStU6AQH/0FPH8thwANjusu0B3QLdYdiBw6pwBOAPgskHkvXALs5yFM0TcWAImF/D0HCKAfBmMB9NOAAuynAK7xVwEWIifqjAX0ELIfBhBgvwgsfxGILMZjAbCFAPphIM8BEWCfFKiAZkYICBAIKHAxehTXSajfZi+Cz6sw5ybk/RB2q//EO+aO3LF3WGfwfXbBTPvNsmDW9f8AIblF3IRSJlsAAAAASUVORK5CYII=',
+  _keyboardMap = {},
+  _gamepadMap = {},
+  _touchpadMap = {},
+  _previousGamepadKeys = {},
 
   map: {},
   keyCodeToReadable: function(keyCode){
@@ -99,11 +134,84 @@ ktg = {
     return keyCode.toString();
   },
 
+  //configures the keyboard,touch and gamepad mapping to internal keys
+  setup: function(map){
+    if(typeof map === 'undefined'){
+      this.map = this._defaultmap;
+    } else {
+      this.map = map;
+    }
+    //configures keyboard key map to internal keys
+    for(var ibutton in this.map.k){
+      var keyCodes = this.map.k[ibutton];
+      for(var i=0; i<keyCodes.length; i++){
+        var keyCode = keyCodes[i];
+        this._keyboardMap[keyCode] = this.key[ibutton];
+      }
+    }
+
+    //configures gamepad buttons and axes map to internal keys
+    for(var ibutton in this.map.g){
+      var gamepadCodes = this.map.g[ibutton];
+      this._gamepadMap[this.key[ibutton]] = this._genericGamepadCheck(gamepadCodes);
+    }
+
+    //setting inital condition for _previousGamepadKeys
+    for(var k in this.key){
+      var kvalue=this.key[k];
+      this._previousGamepadKeys[kvalue]=false;
+    }
+
+    window.addEventListener('keyup',  this.onKeyup ,false);
+    window.addEventListener('keydown', this.onKeydown,false);
+    this._loopUpdateGamepad = true;
+  }
+
   charToKeyCode: function(char) {
     return char.charCodeAt(0)
   },
+
+
+  onKeydown: function(event) {
+    if(event.keyCode in this._keyboardMap){
+      event.preventDefault();
+      this._pressed[this._keyboardMap[event.keyCode]] = true;
+    }
+  },
+
+  onKeyup: function(event) {
+    if(event.keyCode in this._keyboardMap){
+      event.preventDefault();
+      delete this._pressed[this._keyboardMap[event.keyCode]];
+    }
+  },
+
+  updateGamepad: function(){
+    var gamepad = navigator.getGamepads()[0];
+    if (!(typeof gamepad === "undefined")) {
+      for(var k in this.key){
+        var kvalue=this.key[k];
+        var padkeypressed = this._gamepadMap[kvalue](gamepad);
+        //check if key was just pressed
+        if(padkeypressed == true && this._previousGamepadKeys[kvalue] == false){
+          this._pressed[kvalue] = true;
+          this._previousGamepadKeys[kvalue] = true;
+
+        //if it was not, check if it was just released
+      } else if(padkeypressed == false && this._previousGamepadKeys[kvalue] == true){
+          this._previousGamepadKeys[kvalue] = false;
+          delete this._pressed[kvalue];
+        }
+      }
+    }
+
+    if(this._loopUpdateGamepad){
+      setTimeout(1/60,this.updateGamepad);
+    }
+  },
+
   isDown: function(key) {
-    return this._pressed[key];
+    return !!this._pressed[key];
   },
 
 }
