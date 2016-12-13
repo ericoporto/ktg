@@ -135,7 +135,12 @@ ktg = {
   },
 
   //configures the keyboard,touch and gamepad mapping to internal keys
-  setup: function(map){
+  setup: function(autoupdategamepad, map){
+    if(typeof autoupdategamepad === 'undefined'){
+      this._loopUpdateGamepad = true;
+    } else {
+      this._loopUpdateGamepad = autoupdategamepad;
+    }
     if(typeof map === 'undefined'){
       this.map = this._defaultmap;
     } else {
@@ -164,7 +169,9 @@ ktg = {
 
     window.addEventListener('keyup',  this.onKeyup ,false);
     window.addEventListener('keydown', this.onKeydown,false);
-    this._loopUpdateGamepad = true;
+    if(this._loopUpdateGamepad){
+      setTimeout(1/60,this.updateGamepad);
+    }
   }
 
   charToKeyCode: function(char) {
