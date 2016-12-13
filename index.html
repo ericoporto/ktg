@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Keyboard Touch Gamepad</title>
+    <link rel="stylesheet" type="text/css" href="simple.css">
+    <script type="text/javascript" src="ktg.js"></script>
+    <script type="text/javascript">
+      function writeKeyUp(e){
+        document.body.innerHTML = document.body.innerHTML + '<br>'+'button released ' + e.detail;
+      }
+      function writeKeyDown(e){
+        document.body.innerHTML = document.body.innerHTML + '<br>'+'button pressed ' + e.detail;
+      }
+
+      function onbodyload(){
+        ktg.setup()
+        window.addEventListener('ktg_KeyUp',  writeKeyUp,false);
+        window.addEventListener('ktg_KeyDown', writeKeyDown,false);
+      }
+    </script>
+  </head>
+  <body onload='onbodyload()'>
+    <header>
+        <h1> ktg.js</h1>
+        A interface for Keyboard Touch and Gamepad input.
+    </header>
+  <p>
+    Press a key.
+  </p>
+
+  </body>
+</html>

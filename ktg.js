@@ -34,7 +34,7 @@ ktg = {
   key: {
     LEFT: 0, UP: 1, RIGHT: 2, DOWN: 3,
     BUTTONA: 4, BUTTONB: 5, BUTTONX: 6, BUTTONY: 7
-  }
+  },
 
   //when ktg is loaded, if no alternative map is specified, it loads the _defaultMap
   _defaultmap: {
@@ -63,6 +63,7 @@ ktg = {
       HIDEKEYS: [],
       LEFTSIDE: ['LEFT','UP','RIGHT','DOWN'],
       RIGHTSIDE: ['BUTTONA','BUTTONB','BUTTONX','BUTTONY']
+    }
   },
 
   _readableKeyCodeMap: {
@@ -88,8 +89,8 @@ ktg = {
     222: 'single quote'
   },
 
-  _loopUpdateGamepad = true,
-  _gamepadDeadzone = 0.4,
+  _loopUpdateGamepad: true,
+  _gamepadDeadzone: 0.4,
 
   _genericGamepadCheck: function(gamepadCodes){
     var axesbuttons = gamepadCodes[0];
@@ -121,10 +122,10 @@ ktg = {
 
   //128 px width and 16 px height image of each button as 16x16 px image
   _touchButtonsImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAMAAADphoe6AAAAM1BMVEUAAAAiIDQwYII3lG5LaS9ZVlJbbuFjm/9pampqvjB2QoqbrbesMjLZV2PfcSb42wD//qcPQT4sAAAAAXRSTlMAQObYZgAAAYRJREFUeAGllI2OwiAQhBdYsPan9f2f9uw4azMEc2fui6IDJvMVac0m4ftcBLNVMGuC2SGYTQuoy4tpkEGVXGvkcgfud1DWbdtmsJ2s7XbLN4Av7XgIBwVqisLItRPgBHNKSQS8FL8EVjCHQKNBbiGwP2KkQE2XAHOqKsCJEFhUoOD1FtjQTQEYsJ8CGDBCAH0hwCyFJ1QaC/gp4B8EYMD+EDgvfqcA++oJCrgfVyGWqDQWiCEE5pMQeBmgHwIw4BsC6EsABcg0QGECmMD6ExpTwIs/KT4+A6DxMwT2x/4WQB94CaCOIwSu9dStU6AQH/0FPH8thwANjusu0B3QLdYdiBw6pwBOAPgskHkvXALs5yFM0TcWAImF/D0HCKAfBmMB9NOAAuynAK7xVwEWIifqjAX0ELIfBhBgvwgsfxGILMZjAbCFAPphIM8BEWCfFKiAZkYICBAIKHAxehTXSajfZi+Cz6sw5ybk/RB2q//EO+aO3LF3WGfwfXbBTPvNsmDW9f8AIblF3IRSJlsAAAAASUVORK5CYII=',
-  _keyboardMap = {},
-  _gamepadMap = {},
-  _touchpadMap = {},
-  _previousGamepadKeys = {},
+  _keyboardMap: {},
+  _gamepadMap: {},
+  _touchpadMap: {},
+  _previousGamepadKeys:{},
 
   map: {},
   keyCodeToReadable: function(keyCode){
@@ -132,6 +133,67 @@ ktg = {
       return this._readableKeyCodeMap[keyCode];
     }
     return keyCode.toString();
+  },
+
+  charToKeyCode: function(char) {
+    return char.charCodeAt(0)
+  },
+
+  onKeydown: function(event) {
+    var that = ktg;
+    if(event.keyCode in that._keyboardMap){
+      event.preventDefault();
+      that._pressed[that._keyboardMap[event.keyCode]] = true;
+      var newEvent = new CustomEvent('ktg_KeyDown', { 'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
+      window.dispatchEvent(newEvent);
+    }
+  },
+
+  onKeyup: function(event) {
+    var that = ktg;
+    if(event.keyCode in that._keyboardMap){
+      event.preventDefault();
+      delete that._pressed[that._keyboardMap[event.keyCode]];
+      var newEvent = new CustomEvent('ktg_KeyUp', { 'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
+      window.dispatchEvent(newEvent);
+    }
+  },
+
+  updateGamepad: function(){
+    var that = ktg;
+    var gamepad = navigator.getGamepads()[0];
+    if (!(typeof gamepad === "undefined")) {
+      for(var k in that.key){
+        var kvalue=that.key[k];
+        var padkeypressed = that._gamepadMap[kvalue](gamepad);
+        //check if key was just pressed
+        if(padkeypressed == true && that._previousGamepadKeys[kvalue] == false){
+          that._pressed[kvalue] = true;
+          that._previousGamepadKeys[kvalue] = true;
+
+          //throw a ktg event
+          var newEvent = new CustomEvent('ktg_KeyDown', { 'detail': that._KeysString[kvalue]});
+          window.dispatchEvent(newEvent);
+
+        //if it was not, check if it was just released
+      } else if(padkeypressed == false && that._previousGamepadKeys[kvalue] == true){
+          that._previousGamepadKeys[kvalue] = false;
+          delete that._pressed[kvalue];
+
+          //throw a ktg event
+          var newEvent = new CustomEvent('ktg_KeyUp', { 'detail': that._KeysString[kvalue]});
+          window.dispatchEvent(newEvent);
+        }
+      }
+    }
+
+    if(that._loopUpdateGamepad){
+      setTimeout(that.updateGamepad,1000/60);
+    }
+  },
+
+  isDown: function(key) {
+    return !!this._pressed[key];
   },
 
   //configures the keyboard,touch and gamepad mapping to internal keys
@@ -170,55 +232,8 @@ ktg = {
     window.addEventListener('keyup',  this.onKeyup ,false);
     window.addEventListener('keydown', this.onKeydown,false);
     if(this._loopUpdateGamepad){
-      setTimeout(1/60,this.updateGamepad);
+      setTimeout(this.updateGamepad,1000/60);
     }
-  }
-
-  charToKeyCode: function(char) {
-    return char.charCodeAt(0)
-  },
-
-
-  onKeydown: function(event) {
-    if(event.keyCode in this._keyboardMap){
-      event.preventDefault();
-      this._pressed[this._keyboardMap[event.keyCode]] = true;
-    }
-  },
-
-  onKeyup: function(event) {
-    if(event.keyCode in this._keyboardMap){
-      event.preventDefault();
-      delete this._pressed[this._keyboardMap[event.keyCode]];
-    }
-  },
-
-  updateGamepad: function(){
-    var gamepad = navigator.getGamepads()[0];
-    if (!(typeof gamepad === "undefined")) {
-      for(var k in this.key){
-        var kvalue=this.key[k];
-        var padkeypressed = this._gamepadMap[kvalue](gamepad);
-        //check if key was just pressed
-        if(padkeypressed == true && this._previousGamepadKeys[kvalue] == false){
-          this._pressed[kvalue] = true;
-          this._previousGamepadKeys[kvalue] = true;
-
-        //if it was not, check if it was just released
-      } else if(padkeypressed == false && this._previousGamepadKeys[kvalue] == true){
-          this._previousGamepadKeys[kvalue] = false;
-          delete this._pressed[kvalue];
-        }
-      }
-    }
-
-    if(this._loopUpdateGamepad){
-      setTimeout(1/60,this.updateGamepad);
-    }
-  },
-
-  isDown: function(key) {
-    return !!this._pressed[key];
   },
 
 }
