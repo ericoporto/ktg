@@ -148,7 +148,8 @@ ktg = {
     if(event.keyCode in that._keyboardMap){
       event.preventDefault();
       that._pressed[that._keyboardMap[event.keyCode]] = true;
-      var newEvent = new CustomEvent('ktg_KeyDown', { 'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
+      var newEvent = new CustomEvent('ktg_KeyDown', {
+         'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
       window.dispatchEvent(newEvent);
       that._lastInputType = 'keyboard';
     }
@@ -159,7 +160,8 @@ ktg = {
     if(event.keyCode in that._keyboardMap){
       event.preventDefault();
       delete that._pressed[that._keyboardMap[event.keyCode]];
-      var newEvent = new CustomEvent('ktg_KeyUp', { 'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
+      var newEvent = new CustomEvent('ktg_KeyUp', {
+        'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
       window.dispatchEvent(newEvent);
       that._lastInputType = 'keyboard';
     }
@@ -178,7 +180,8 @@ ktg = {
           that._previousGamepadKeys[kvalue] = true;
 
           //throw a ktg event
-          var newEvent = new CustomEvent('ktg_KeyDown', { 'detail': that._KeysString[kvalue]});
+          var newEvent = new CustomEvent('ktg_KeyDown', {
+            'detail': that._KeysString[kvalue]});
           window.dispatchEvent(newEvent);
 
           that._lastInputType = 'gamepad';
@@ -189,7 +192,8 @@ ktg = {
           delete that._pressed[kvalue];
 
           //throw a ktg event
-          var newEvent = new CustomEvent('ktg_KeyUp', { 'detail': that._KeysString[kvalue]});
+          var newEvent = new CustomEvent('ktg_KeyUp', {
+            'detail': that._KeysString[kvalue]});
           window.dispatchEvent(newEvent);
 
           that._lastInputType = 'gamepad';
@@ -261,7 +265,7 @@ ktg = {
           text=text+', ';
       }
       if(i<this._KeysString.length-1)
-        text=text+"\n"
+        text=text+"\n";
     }
     return text;
   }
