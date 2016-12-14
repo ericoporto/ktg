@@ -1,6 +1,8 @@
 # ktg
 kgt.js - Keyboard Touch and Gamepad library to ease Javascript Game Input Handling
 
+![](buttons.png)
+
 Before using, you need to declare at some place:
 
     ktg.setup()
