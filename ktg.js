@@ -23,7 +23,7 @@
 ktg = {
 
   //this contains keys currently pressed as enum, should only be accessed
-  //through isDown
+  //through isPressed
   _pressed: {},
 
   //this allows key enum to key name translation
@@ -290,7 +290,7 @@ ktg = {
         that._pressed[n] = true;
 
         //throw a ktg event
-        var newEvent = new CustomEvent('ktg_KeyDown', {
+        var newEvent = new CustomEvent('ktg_KeyPressed', {
           'detail': that._KeysString[n]});
         window.dispatchEvent(newEvent);
 
@@ -301,7 +301,7 @@ ktg = {
         delete that._pressed[n];
 
         //throw a ktg event
-        var newEvent = new CustomEvent('ktg_KeyUp', {
+        var newEvent = new CustomEvent('ktg_KeyReleased', {
           'detail': that._KeysString[n]});
         window.dispatchEvent(newEvent);
 
@@ -336,10 +336,14 @@ ktg = {
     var that = ktg;
     if(event.keyCode in that._keyboardMap){
       event.preventDefault();
+      if(that._pressed[that._keyboardMap[event.keyCode]] != true){
+        var newEvent = new CustomEvent('ktg_KeyPressed', {
+           'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
+        window.dispatchEvent(newEvent);
+      }
+
       that._pressed[that._keyboardMap[event.keyCode]] = true;
-      var newEvent = new CustomEvent('ktg_KeyDown', {
-         'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
-      window.dispatchEvent(newEvent);
+
       that._lastInputType = 'keyboard';
     }
   },
@@ -349,7 +353,7 @@ ktg = {
     if(event.keyCode in that._keyboardMap){
       event.preventDefault();
       delete that._pressed[that._keyboardMap[event.keyCode]];
-      var newEvent = new CustomEvent('ktg_KeyUp', {
+      var newEvent = new CustomEvent('ktg_KeyReleased', {
         'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
       window.dispatchEvent(newEvent);
       that._lastInputType = 'keyboard';
@@ -369,7 +373,7 @@ ktg = {
           that._previousGamepadKeys[kvalue] = true;
 
           //throw a ktg event
-          var newEvent = new CustomEvent('ktg_KeyDown', {
+          var newEvent = new CustomEvent('ktg_KeyPressed', {
             'detail': that._KeysString[kvalue]});
           window.dispatchEvent(newEvent);
 
@@ -381,7 +385,7 @@ ktg = {
           delete that._pressed[kvalue];
 
           //throw a ktg event
-          var newEvent = new CustomEvent('ktg_KeyUp', {
+          var newEvent = new CustomEvent('ktg_KeyReleased', {
             'detail': that._KeysString[kvalue]});
           window.dispatchEvent(newEvent);
 
@@ -395,7 +399,7 @@ ktg = {
     }
   },
 
-  isDown: function(key) {
+  isPressed: function(key) {
     return !!this._pressed[key];
   },
 

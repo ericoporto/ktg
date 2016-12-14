@@ -15,8 +15,8 @@
 
       function onbodyload(){
         ktg.setup()
-        window.addEventListener('ktg_KeyUp',  writeKeyUp,false);
-        window.addEventListener('ktg_KeyDown', writeKeyDown,false);
+        window.addEventListener('ktg_KeyReleased',  writeKeyUp,false);
+        window.addEventListener('ktg_KeyPressed', writeKeyDown,false);
         document.getElementById('writer').innerHTML = document.getElementById('writer').innerHTML  + ktg.getPrintableKeyboadMap().replace(/\n/g, "<br />") +  '<br>' ;
       }
     </script>
