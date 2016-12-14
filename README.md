@@ -57,6 +57,8 @@ In case your game resizes, for example, by resizing the browser window, or going
 fullscreen, you will need to deal with this. When you deal, just ensure to call
 ktg.resize() to guarantee it will resize the touch input appropriately.
 
+![](screenshot.png)
+
 # Author
 
 Made by Érico Vieira Porto
