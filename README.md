@@ -10,6 +10,10 @@ kgt.js - Keyboard Touch and Gamepad library to ease Javascript Game Input Handli
 - [my ludum dare entry, adapted for **ktg**](https://ericoporto.github.io/ktg/example/rocambolli_ktgedition/)
 
 # how to use
+First, add to your html document:
+
+    <script type="text/javascript" src="ktg.js"></script>
+
 Before using, you need to declare at some place:
 
     ktg.setup()
