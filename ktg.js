@@ -60,9 +60,7 @@ ktg = {
     },
     t: {
       SIZE: 0.1,
-      HIDEKEYS: [],
-      LEFTSIDE: ['LEFT','UP','RIGHT','DOWN'],
-      RIGHTSIDE: ['BUTTONA','BUTTONB','BUTTONX','BUTTONY']
+      HIDEKEYS: []
     }
   },
 
@@ -121,11 +119,202 @@ ktg = {
   },
 
   //128 px width and 16 px height image of each button as 16x16 px image
-  _touchButtonsImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAMAAADphoe6AAAAM1BMVEUAAAAiIDQwYII3lG5LaS9ZVlJbbuFjm/9pampqvjB2QoqbrbesMjLZV2PfcSb42wD//qcPQT4sAAAAAXRSTlMAQObYZgAAAYRJREFUeAGllI2OwiAQhBdYsPan9f2f9uw4azMEc2fui6IDJvMVac0m4ftcBLNVMGuC2SGYTQuoy4tpkEGVXGvkcgfud1DWbdtmsJ2s7XbLN4Av7XgIBwVqisLItRPgBHNKSQS8FL8EVjCHQKNBbiGwP2KkQE2XAHOqKsCJEFhUoOD1FtjQTQEYsJ8CGDBCAH0hwCyFJ1QaC/gp4B8EYMD+EDgvfqcA++oJCrgfVyGWqDQWiCEE5pMQeBmgHwIw4BsC6EsABcg0QGECmMD6ExpTwIs/KT4+A6DxMwT2x/4WQB94CaCOIwSu9dStU6AQH/0FPH8thwANjusu0B3QLdYdiBw6pwBOAPgskHkvXALs5yFM0TcWAImF/D0HCKAfBmMB9NOAAuynAK7xVwEWIifqjAX0ELIfBhBgvwgsfxGILMZjAbCFAPphIM8BEWCfFKiAZkYICBAIKHAxehTXSajfZi+Cz6sw5ybk/RB2q//EO+aO3LF3WGfwfXbBTPvNsmDW9f8AIblF3IRSJlsAAAAASUVORK5CYII=',
+  _touchButtonsImageBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAMAAADphoe6AAAAM1BMVEUAAAAiIDQwYII3lG5LaS9ZVlJbbuFjm/9pampqvjB2QoqbrbesMjLZV2PfcSb42wD//qcPQT4sAAAAAXRSTlMAQObYZgAAAYRJREFUeAGllI2OwiAQhBdYsPan9f2f9uw4azMEc2fui6IDJvMVac0m4ftcBLNVMGuC2SGYTQuoy4tpkEGVXGvkcgfud1DWbdtmsJ2s7XbLN4Av7XgIBwVqisLItRPgBHNKSQS8FL8EVjCHQKNBbiGwP2KkQE2XAHOqKsCJEFhUoOD1FtjQTQEYsJ8CGDBCAH0hwCyFJ1QaC/gp4B8EYMD+EDgvfqcA++oJCrgfVyGWqDQWiCEE5pMQeBmgHwIw4BsC6EsABcg0QGECmMD6ExpTwIs/KT4+A6DxMwT2x/4WQB94CaCOIwSu9dStU6AQH/0FPH8thwANjusu0B3QLdYdiBw6pwBOAPgskHkvXALs5yFM0TcWAImF/D0HCKAfBmMB9NOAAuynAK7xVwEWIifqjAX0ELIfBhBgvwgsfxGILMZjAbCFAPphIM8BEWCfFKiAZkYICBAIKHAxehTXSajfZi+Cz6sw5ybk/RB2q//EO+aO3LF3WGfwfXbBTPvNsmDW9f8AIblF3IRSJlsAAAAASUVORK5CYII=',
+  _touchpadDefinitions: {
+    LEFTSIDE: {
+      TOUCHAREAS: {
+        LEFT:  {  X:   0, Y: 16, W: 16, H: 16 },
+        UP:    {  X:  16, Y:  0, W: 16, H: 16 },
+        RIGHT: {  X:  32, Y: 16, W: 16, H: 16 },
+        DOWN:  {  X:  16, Y: 32, W: 16, H: 16 }
+      },
+      X: 0,
+      Y: 0,
+
+      W: 48,
+      H: 48
+    },
+    RIGHTSIDE: {
+      TOUCHAREAS: {
+        BUTTONA: {  X:  16, Y: 32, W: 16, H: 16 },
+        BUTTONB: {  X:  32, Y: 16, W: 16, H: 16 },
+        BUTTONX: {  X:   0, Y: 16, W: 16, H: 16 },
+        BUTTONY: {  X:  16, Y:  0, W: 16, H: 16 }
+      },
+      X: 0,
+      Y: 0,
+      W: 48,
+      H: 48
+    }
+  },
+
+  _generateTouchpadImage: function(){
+    function setpixelated(canvas){
+      var ctx = canvas.getContext('2d');
+      ctx['imageSmoothingEnabled'] = false;       /* standard */
+      ctx['mozImageSmoothingEnabled'] = false;    /* Firefox */
+      ctx['oImageSmoothingEnabled'] = false;      /* Opera */
+      ctx['webkitImageSmoothingEnabled'] = false; /* Safari */
+      ctx['msImageSmoothingEnabled'] = false;     /* IE */
+      canvas.style.imageRendering = 'optimizeSpeed';
+      canvas.style.imageRendering = '-moz-crisp-edges';
+      canvas.style.imageRendering = '-o-crisp-edges';
+      canvas.style.imageRendering = '-webkit-optimize-contrast';
+      canvas.style.imageRendering = 'optimize-contrast';
+      canvas.style.imageRendering = 'crisp-edges';
+      canvas.style.imageRendering = 'pixelated';
+    }
+
+    var buttonsimg = this._buttonsimg;
+    this._lTouch = document.createElement('canvas');
+    this._lTouch.width = this._touchpadDefinitions.LEFTSIDE.W;
+    this._lTouch.height = this._touchpadDefinitions.LEFTSIDE.H;
+    setpixelated(this._lTouch);
+    var lctx = this._lTouch.getContext('2d');
+    lctx.fillStyle = '#221F3B';
+    lctx.fillRect(0, 0, this._lTouch.width, this._lTouch.height);
+    for(var ta in this._touchpadDefinitions.LEFTSIDE.TOUCHAREAS){
+      var input = this._touchpadDefinitions.LEFTSIDE.TOUCHAREAS[ta];
+      var n = this.key[ta];
+      lctx.drawImage(buttonsimg,
+        n*16, 0,
+        16, 16,
+        input.X, input.Y,
+        input.W, input.H);
+    }
+
+    this._rTouch = document.createElement('canvas');
+    this._rTouch.width = this._touchpadDefinitions.RIGHTSIDE.W;
+    this._rTouch.height = this._touchpadDefinitions.RIGHTSIDE.H;
+    setpixelated(this._rTouch);
+    var rctx = this._rTouch.getContext('2d');
+    rctx.fillStyle = '#322F3B';
+    rctx.fillRect(0, 0, this._rTouch.width, this._rTouch.height);
+    for(var ta in this._touchpadDefinitions.RIGHTSIDE.TOUCHAREAS){
+      var input = this._touchpadDefinitions.RIGHTSIDE.TOUCHAREAS[ta];
+      var n = this.key[ta];
+      rctx.drawImage(buttonsimg,
+        n*16, 0,
+        16, 16,
+        input.X, input.Y,
+        input.W, input.H);
+    }
+
+  },
+
+  _placeTouchpadImages(place){
+    //place at leftside at left
+    this._lTouch.style.position = 'absolute';
+    this._lTouch.style['z-index'] = 1000;
+    this._lTouch.style.bottom = '10%';
+    this._lTouch.style.left = '0%';
+    this._lTouch.style.height = Math.floor(window.innerHeight/3) + 'px';
+    this._lTouch.style.width = Math.floor(window.innerHeight/3) + 'px';
+
+    //place at rightside at left
+    this._rTouch.style.position = 'absolute';
+    this._rTouch.style['z-index'] = 1000;
+    this._rTouch.style.bottom = '10%';
+    this._rTouch.style.right = '0%';
+    this._rTouch.style.height = Math.floor(window.innerHeight/3) + 'px';
+    this._rTouch.style.width = Math.floor(window.innerHeight/3) + 'px';
+  },
+
+  handleTouchDownLeft: function(e){
+    e.preventDefault();
+    ktg.processTouches(e.touches, 'down', 'left');
+  },
+
+  handleTouchMoveLeft: function(e){
+    e.preventDefault();
+    ktg.processTouches(e.touches, 'move', 'left');
+  },
+
+  handleTouchUpLeft: function(e){
+    e.preventDefault();
+    ktg.processTouches(e.touches, 'up', 'left');
+  },
+
+  handleTouchDownRight: function(e){
+    e.preventDefault();
+    ktg.processTouches(e.touches, 'down', 'right');
+  },
+
+  handleTouchMoveRight: function(e){
+    e.preventDefault();
+    ktg.processTouches(e.touches, 'move', 'right');
+  },
+
+  handleTouchUpRight: function(e){
+    e.preventDefault();
+    ktg.processTouches(e.touches, 'up', 'right');
+  },
+
+  processTouches: function(touches, kind, side) {
+    var that = ktg;
+
+    if(side == 'left'){
+      var offsetTop = that._lTouch.offsetTop,
+          offsetLeft = that._lTouch.offsetLeft;
+      var scale = parseInt(that._lTouch.style.width, 10)/ that._lTouch.width;
+      var touchareas = that._touchpadDefinitions.LEFTSIDE.TOUCHAREAS;
+    } else {
+      var offsetTop = that._rTouch.offsetTop,
+          offsetLeft = that._rTouch.offsetLeft;
+      var scale = parseInt(that._lTouch.style.width, 10)/ that._rTouch.width;
+      var touchareas = that._touchpadDefinitions.RIGHTSIDE.TOUCHAREAS;
+    }
+
+    for(var ta in touchareas){
+
+      var touched = false;
+      var input = touchareas[ta];
+      var n = that.key[ta];
+
+      for (var i = 0; i < touches.length; i++) {
+        var pos = {
+          x: ((touches[i].pageX - offsetLeft) / scale),
+          y: ((touches[i].pageY - offsetTop) / scale)
+        };
+
+        if (pos.x > input.X && pos.y > input.Y) {
+          if (pos.x < input.X + input.W && pos.y < input.Y + input.H) {
+            touched = true;
+            break;
+          }
+        }
+      }
+
+      if(touched == true && that._previousTouchpadKeys[n] == false){
+        that._previousTouchpadKeys[n] = true;
+        that._pressed[n] = true;
+
+        //throw a ktg event
+        var newEvent = new CustomEvent('ktg_KeyDown', {
+          'detail': that._KeysString[n]});
+        window.dispatchEvent(newEvent);
+
+        that._lastInputType = 'touchpad';
+
+      } else if (touched == false && that._previousTouchpadKeys[n] == true){
+        that._previousTouchpadKeys[n] = false;
+        delete that._pressed[n];
+
+        //throw a ktg event
+        var newEvent = new CustomEvent('ktg_KeyUp', {
+          'detail': that._KeysString[n]});
+        window.dispatchEvent(newEvent);
+
+        that._lastInputType = 'touchpad';
+      }
+    }
+  },
+
   _keyboardMap: {},
   _gamepadMap: {},
   _touchpadMap: {},
   _previousGamepadKeys:{},
+  _previousTouchpadKeys:{},
   _lastInputType: '',
 
   map: {},
@@ -211,13 +400,18 @@ ktg = {
   },
 
   //configures the keyboard,touch and gamepad mapping to internal keys
-  setup: function(autoupdategamepad, map){
-    if(typeof autoupdategamepad === 'undefined'){
+  setup: function(autoupdategamepad, drawtouch, map){
+    if(typeof drawtouch === 'undefined' || drawtouch === null){
+      this._drawtouch = true;
+    } else {
+      this._drawtouch = drawtouch;
+    }
+    if(typeof autoupdategamepad === 'undefined' || autoupdategamepad === null){
       this._loopUpdateGamepad = true;
     } else {
       this._loopUpdateGamepad = autoupdategamepad;
     }
-    if(typeof map === 'undefined'){
+    if(typeof map === 'undefined' || map === null){
       this.map = this._defaultmap;
     } else {
       this.map = map;
@@ -242,6 +436,35 @@ ktg = {
       var kvalue=this.key[k];
       this._previousGamepadKeys[kvalue]=false;
     }
+
+    //setting inital condition for _previousTouchpadKeys
+    for(var k in this.key){
+      var kvalue=this.key[k];
+      this._previousTouchpadKeys[kvalue]=false;
+    }
+
+    if(this._drawtouch){
+      this._buttonsimg = document.createElement('img');
+      this._buttonsimg.style.width  = 128;
+      this._buttonsimg.style.height = 16;
+      this._buttonsimg.onload = function(){
+        ktg._generateTouchpadImage();
+        ktg._placeTouchpadImages();
+
+        //push the canvas to the document, won't work without this
+        document.documentElement.appendChild(ktg._lTouch);
+        document.documentElement.appendChild(ktg._rTouch);
+
+        ktg._lTouch.addEventListener('touchstart', ktg.handleTouchDownLeft, false);
+        ktg._lTouch.addEventListener('touchmove', ktg.handleTouchMoveLeft, false);
+        ktg._lTouch.addEventListener('touchend', ktg.handleTouchUpLeft, false);
+        ktg._rTouch.addEventListener('touchstart', ktg.handleTouchDownRight, false);
+        ktg._rTouch.addEventListener('touchmove', ktg.handleTouchMoveRight, false);
+        ktg._rTouch.addEventListener('touchend', ktg.handleTouchUpRight, false);
+      }
+      this._buttonsimg.src = this._touchButtonsImageBase64;
+    }
+
 
     window.addEventListener('keyup',  this.onKeyup ,false);
     window.addEventListener('keydown', this.onKeydown,false);
