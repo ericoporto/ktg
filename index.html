@@ -7,17 +7,17 @@
     <script type="text/javascript" src="ktg.js"></script>
     <script type="text/javascript">
       function writeKeyUp(e){
-        document.body.innerHTML = document.body.innerHTML + '<br>'+'button released ' + e.detail;
+        document.getElementById('writer').innerHTML = document.getElementById('writer').innerHTML  + '<br>'+'button released ' + e.detail;
       }
       function writeKeyDown(e){
-        document.body.innerHTML = document.body.innerHTML + '<br>'+'button pressed ' + e.detail;
+        document.getElementById('writer').innerHTML  = document.getElementById('writer').innerHTML  + '<br>'+'button pressed ' + e.detail;
       }
 
       function onbodyload(){
         ktg.setup()
         window.addEventListener('ktg_KeyUp',  writeKeyUp,false);
         window.addEventListener('ktg_KeyDown', writeKeyDown,false);
-        document.body.innerHTML = document.body.innerHTML + ktg.getPrintableKeyboadMap().replace(/\n/g, "<br />") +  '<br>' ;
+        document.getElementById('writer').innerHTML = document.getElementById('writer').innerHTML  + ktg.getPrintableKeyboadMap().replace(/\n/g, "<br />") +  '<br>' ;
       }
     </script>
   </head>
@@ -30,5 +30,13 @@
     Press a key.
   </p>
 
+  <div id='writer'>
+  </div>
+
+  <footer>
+    <br>MIT License, copyright Érico Vieira Porto 2016</br>
+    <br> more info on the Github repository:
+    <a href="https://github.com/ericoporto/ktg"> github.com/ericoporto/ktg </a>
+  </footer>
   </body>
 </html>
