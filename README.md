@@ -3,6 +3,13 @@ kgt.js - Keyboard Touch and Gamepad library to ease Javascript Game Input Handli
 
 ![](buttons.png)
 
+# examples
+
+- [a simple demo page](https://ericoporto.github.io/ktg/)
+
+- [my ludum dare entry, adapted for **ktg**](https://ericoporto.github.io/ktg/example/rocambolli_ktgedition/)
+
+# how to use
 Before using, you need to declare at some place:
 
     ktg.setup()
@@ -32,6 +39,23 @@ The possible keys by default are:
     ktg.key.BUTTONX
     ktg.key.BUTTONY
   }
+  
+## ktg.setup details
+
+ktg.setup accepts two parameters:
+
+- `autoupdategamepad` : set this to `false` if you want to place your gamepad 
+update in your own loop, to ensure better precision. You will need to manually 
+call ktg.updateGamepad(). Default is `true`.
+    
+- `drawtouch` : set to `false`if you don't need the touch input functionality, 
+for example, if you detect that your game is in a desktop. Default is `true`.
+
+## ktg.resize details
+
+In case your game resizes, for example, by resizing the browser window, or going
+fullscreen, you will need to deal with this. When you deal, just ensure to call
+ktg.resize() to guarantee it will resize the touch input appropriately.
 
 # Author
 
