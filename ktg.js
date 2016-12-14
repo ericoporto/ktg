@@ -126,13 +126,17 @@ ktg = {
   _gamepadMap: {},
   _touchpadMap: {},
   _previousGamepadKeys:{},
+  _lastInputType: '',
 
   map: {},
   keyCodeToReadable: function(keyCode){
+    if(typeof keyCode === undefined){
+      return;
+    }
     if( keyCode in this._readableKeyCodeMap){
       return this._readableKeyCodeMap[keyCode];
     }
-    return keyCode.toString();
+    return parseInt(keyCode).toString();
   },
 
   charToKeyCode: function(char) {
@@ -146,6 +150,7 @@ ktg = {
       that._pressed[that._keyboardMap[event.keyCode]] = true;
       var newEvent = new CustomEvent('ktg_KeyDown', { 'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
       window.dispatchEvent(newEvent);
+      that._lastInputType = 'keyboard';
     }
   },
 
@@ -156,6 +161,7 @@ ktg = {
       delete that._pressed[that._keyboardMap[event.keyCode]];
       var newEvent = new CustomEvent('ktg_KeyUp', { 'detail': that._KeysString[that._keyboardMap[event.keyCode]]});
       window.dispatchEvent(newEvent);
+      that._lastInputType = 'keyboard';
     }
   },
 
@@ -175,6 +181,8 @@ ktg = {
           var newEvent = new CustomEvent('ktg_KeyDown', { 'detail': that._KeysString[kvalue]});
           window.dispatchEvent(newEvent);
 
+          that._lastInputType = 'gamepad';
+
         //if it was not, check if it was just released
       } else if(padkeypressed == false && that._previousGamepadKeys[kvalue] == true){
           that._previousGamepadKeys[kvalue] = false;
@@ -183,6 +191,8 @@ ktg = {
           //throw a ktg event
           var newEvent = new CustomEvent('ktg_KeyUp', { 'detail': that._KeysString[kvalue]});
           window.dispatchEvent(newEvent);
+
+          that._lastInputType = 'gamepad';
         }
       }
     }
@@ -235,5 +245,25 @@ ktg = {
       setTimeout(this.updateGamepad,1000/60);
     }
   },
+
+  getLastInputType: function(){
+    return this._lastInputType;
+  },
+
+  getPrintableKeyboadMap: function(){
+    var text='';
+    for(var i=0; i<this._KeysString.length; i++){
+      text=text+this._KeysString[i]+': ';
+      var keyCodes = this.map.k[this._KeysString[i]];
+      for(var j=0; j<keyCodes.length; j++){
+        text=text+this.keyCodeToReadable(keyCodes[j]);
+        if(j<keyCodes.length-1)
+          text=text+', ';
+      }
+      if(i<this._KeysString.length-1)
+        text=text+"\n"
+    }
+    return text;
+  }
 
 }

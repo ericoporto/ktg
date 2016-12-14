@@ -17,6 +17,7 @@
         ktg.setup()
         window.addEventListener('ktg_KeyUp',  writeKeyUp,false);
         window.addEventListener('ktg_KeyDown', writeKeyDown,false);
+        document.body.innerHTML = document.body.innerHTML + ktg.getPrintableKeyboadMap().replace(/\n/g, "<br />") +  '<br>' ;
       }
     </script>
   </head>
