@@ -143,7 +143,7 @@ function game_start(){
         isJump: false,
         frameFirstJump: 0,
         isNotGrounded: function() {
-            return pl.canWalk(pl.xy,[0,1])
+            return pl.canWalk(pl.xy,[0,1],'DOWN')
         },
         grabCoin: function(xy){
             ctx.clearRect(xy[0]-1,xy[1]-1,3,3)
@@ -231,10 +231,19 @@ function game_start(){
 
             return true
         },
-        canWalk: function(xy,modfier){
-            if(pl.checkMatrix(xy,modfier))
+        canWalk: function(xy,modfier,direction){
+            if(pl.checkMatrix(xy,modfier)){
+                if(direction=='LEFT' || direction=='RIGHT'){
+                  if(walkmatrix[xy[1]+modfier[1]  ][xy[0]+modfier[0]]!=ENUM_AIR &&
+                     walkmatrix[xy[1]+modfier[1]-1][xy[0]+modfier[0]]==ENUM_AIR &&
+                     walkmatrix[xy[1]+modfier[1]-2][xy[0]+modfier[0]]==ENUM_AIR &&
+                     walkmatrix[xy[1]+modfier[1]-3][xy[0]+modfier[0]]==ENUM_AIR ){
+                       pl.xy[1]=pl.xy[1]-2;
+                     }
+                }
+
                 return walkmatrix[xy[1]+modfier[1]][xy[0]+modfier[0]] == ENUM_AIR;
-            else
+           }  else
                 return false
         },
         update: function() {
@@ -262,7 +271,7 @@ function game_start(){
               nothing = false;
               pl.facing = 'right';
               pl.animation = 'walking';
-              if(pl.canWalk(pl.xy,[1,0]))
+              if(pl.canWalk(pl.xy,[1,0],'RIGHT'))
                   pl.xy[0]+=1;
             }
 
@@ -272,7 +281,7 @@ function game_start(){
               nothing = false;
               pl.facing = 'left';
               pl.animation = 'walking';
-              if(pl.canWalk(pl.xy,[-1,0]))
+              if(pl.canWalk(pl.xy,[-1,0],'LEFT'))
                   pl.xy[0]-=1;
             }
 
