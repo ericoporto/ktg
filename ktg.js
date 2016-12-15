@@ -206,9 +206,10 @@ ktg = {
     if(window.innerHeight>window.innerWidth){
       //place at leftside at left
       ktg._lTouch.style.position = 'absolute';
-      ktg._lTouch.style['z-index'] = 1000;
+      ktg._lTouch.style['z-index'] = 1001;
       ktg._lTouch.style.bottom = '5%';
-      ktg._lTouch.style.left = '0%';
+      ktg._lTouch.style.left = 0;
+      ktg._rTouch.style.right = 'auto';
 
       ktg._lTouch.style.height = Math.floor(window.innerWidth/2) + 'px';
       ktg._lTouch.style.width = Math.floor(window.innerWidth/2) + 'px';
@@ -217,15 +218,18 @@ ktg = {
       ktg._rTouch.style.position = 'absolute';
       ktg._rTouch.style['z-index'] = 1000;
       ktg._rTouch.style.bottom = '5%';
-      ktg._rTouch.style.right = '0%';
+      ktg._rTouch.style.right = 0;
+      ktg._rTouch.style.left = 'auto';
+
       ktg._rTouch.style.height = Math.floor(window.innerWidth/2) + 'px';
       ktg._rTouch.style.width = Math.floor(window.innerWidth/2) + 'px';
     } else {
       //place at leftside at left
       ktg._lTouch.style.position = 'absolute';
-      ktg._lTouch.style['z-index'] = 1000;
+      ktg._lTouch.style['z-index'] = 1001;
       ktg._lTouch.style.bottom = '10%';
-      ktg._lTouch.style.left = '0%';
+      ktg._lTouch.style.left = 0;
+      ktg._rTouch.style.right = 'auto';
 
       ktg._lTouch.style.height = Math.floor(window.innerHeight/3) + 'px';
       ktg._lTouch.style.width = Math.floor(window.innerHeight/3) + 'px';
@@ -234,7 +238,9 @@ ktg = {
       ktg._rTouch.style.position = 'absolute';
       ktg._rTouch.style['z-index'] = 1000;
       ktg._rTouch.style.bottom = '10%';
-      ktg._rTouch.style.right = '0%';
+      ktg._rTouch.style.right = 0;
+      ktg._rTouch.style.left = 'auto';
+
       ktg._rTouch.style.height = Math.floor(window.innerHeight/3) + 'px';
       ktg._rTouch.style.width = Math.floor(window.innerHeight/3) + 'px';
     }
