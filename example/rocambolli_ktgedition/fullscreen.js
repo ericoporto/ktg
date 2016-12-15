@@ -26,7 +26,6 @@ var fullscreen = {
             element.msRequestFullscreen();
         }
         this.isFullscreen = true;
-        actions.alert('in fullscreen!')
     },
     setup: function() {
         var createButton = function(buttonname, context, func) {
