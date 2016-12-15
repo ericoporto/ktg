@@ -335,8 +335,8 @@ function game_start(){
     increr = 0;
 
     resize();
-
     ktg.setup(false, window.mobilecheck());
+    setTimeout(resize,1000);
     reset();
     draw();
 
@@ -418,14 +418,28 @@ function analyzeimg(){
 
 function resize(){
     function correctCanvas(canvas){
-        canvas.style.height = Math.floor(window.innerHeight*0.8) + 'px';
-        canvas.style.width = Math.floor(window.innerWidth*0.8) + 'px';
-        canvas.style.position = 'absolute';
-        canvas.style.top= 0;
-        canvas.style.bottom= 0;
-        canvas.style.left= 0;
-        canvas.style.right= 0;
-        canvas.style.margin= 'auto';
+        if(window.innerHeight>window.innerWidth){
+          //portrait
+          canvas.style.height = Math.floor(window.innerWidth*10/16.0) + 'px';
+          canvas.style.width = Math.floor(window.innerWidth) + 'px';
+          canvas.style.position = 'absolute';
+          canvas.style.top= 0;
+          canvas.style.bottom= parseInt(window.innerHeight, 10)-parseInt(canvas.style.height, 10);
+          canvas.style.left= 0;
+          canvas.style.right= 0;
+          canvas.style.margin= '0 auto';
+        } else {
+          //landscape
+          canvas.style.height = Math.floor(window.innerHeight*0.8) + 'px';
+          canvas.style.width = Math.floor(window.innerHeight*16*0.8/9.0) + 'px';
+          canvas.style.position = 'absolute';
+          canvas.style.top= 0;
+          canvas.style.bottom= 0;
+          canvas.style.left= 0;
+          canvas.style.right= 0;
+          canvas.style.margin= 'auto';
+        }
+
         setpixelated(canvas)
     }
 
