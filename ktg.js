@@ -98,20 +98,20 @@ ktg = {
     if(axesbuttons=='axes'){
       if(moreless == '<'){
         return function(pad){
-          if (!(typeof pad === "undefined")) {
+          if ((typeof pad !== 'undefined') && pad != null) {
             return pad.axes[n] < -ktg._gamepadDeadzone;
           }
         };
       } else {
         return function(pad){
-          if (!(typeof pad === "undefined")) {
+          if ((typeof pad !== 'undefined') && pad != null) {
             return pad.axes[n] > ktg._gamepadDeadzone;
           }
         };
       }
     } else {
       return function(pad){
-        if (!(typeof pad === "undefined")) {
+        if ((typeof pad !== 'undefined') && pad != null) {
           return !!pad.buttons[n].pressed;
         }
       };
@@ -389,7 +389,7 @@ ktg = {
   updateGamepad: function(){
     var that = ktg;
     var gamepad = navigator.getGamepads()[0];
-    if (!(typeof gamepad === "undefined")) {
+    if ((typeof gamepad !== 'undefined') && gamepad != null) {
       for(var k in that.key){
         var kvalue=that.key[k];
         var padkeypressed = that._gamepadMap[kvalue](gamepad);
