@@ -501,7 +501,7 @@ function drawLoopStuff(angl){
 }
 
 window.addEventListener('resize', resize, false);
-window.addEventListener('orientationchange', resize, false);
+window.addEventListener('orientationchange', function(){resize(); setTimeout(resize,1000);}, false);
 
 function draw(){
     increr++
