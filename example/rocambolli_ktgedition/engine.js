@@ -337,6 +337,7 @@ function game_start(){
     resize();
     ktg.setup(false, window.mobilecheck());
     setTimeout(resize,1000);
+    setTimeout(resize,3500);
     reset();
     draw();
 
