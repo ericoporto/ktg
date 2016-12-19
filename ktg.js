@@ -21,6 +21,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 ktg = {
+  //a simple version string
+  _version: '0.1.1',
 
   //this contains keys currently pressed as enum, should only be accessed
   //through isPressed
@@ -59,11 +61,39 @@ ktg = {
       BUTTONY: ['buttons', 3],  //button 'Y'
     },
     t: {
-      SIZE: 0.1,
-      HIDEKEYS: []
+      HIDEKEYS: [],
+      tmap: {
+        LEFTSIDE: {
+          TOUCHAREAS: {
+            LEFT:  {  X:   0, Y: 16, W: 16, H: 16 },
+            UP:    {  X:  16, Y:  0, W: 16, H: 16 },
+            RIGHT: {  X:  32, Y: 16, W: 16, H: 16 },
+            DOWN:  {  X:  16, Y: 32, W: 16, H: 16 }
+          },
+          X: 0,
+          Y: 0,
+
+          W: 48,
+          H: 48
+        },
+        RIGHTSIDE: {
+          TOUCHAREAS: {
+            BUTTONA: {  X:  16, Y: 32, W: 16, H: 16 },
+            BUTTONB: {  X:  32, Y: 16, W: 16, H: 16 },
+            BUTTONX: {  X:   0, Y: 16, W: 16, H: 16 },
+            BUTTONY: {  X:  16, Y:  0, W: 16, H: 16 }
+          },
+          X: 0,
+          Y: 0,
+          W: 48,
+          H: 48
+        }
+      },
+      base64img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAMAAADphoe6AAAAM1BMVEUAAAAiIDQwYII3lG5LaS9ZVlJbbuFjm/9pampqvjB2QoqbrbesMjLZV2PfcSb42wD//qcPQT4sAAAAAXRSTlMAQObYZgAAAYRJREFUeAGllI2OwiAQhBdYsPan9f2f9uw4azMEc2fui6IDJvMVac0m4ftcBLNVMGuC2SGYTQuoy4tpkEGVXGvkcgfud1DWbdtmsJ2s7XbLN4Av7XgIBwVqisLItRPgBHNKSQS8FL8EVjCHQKNBbiGwP2KkQE2XAHOqKsCJEFhUoOD1FtjQTQEYsJ8CGDBCAH0hwCyFJ1QaC/gp4B8EYMD+EDgvfqcA++oJCrgfVyGWqDQWiCEE5pMQeBmgHwIw4BsC6EsABcg0QGECmMD6ExpTwIs/KT4+A6DxMwT2x/4WQB94CaCOIwSu9dStU6AQH/0FPH8thwANjusu0B3QLdYdiBw6pwBOAPgskHkvXALs5yFM0TcWAImF/D0HCKAfBmMB9NOAAuynAK7xVwEWIifqjAX0ELIfBhBgvwgsfxGILMZjAbCFAPphIM8BEWCfFKiAZkYICBAIKHAxehTXSajfZi+Cz6sw5ybk/RB2q//EO+aO3LF3WGfwfXbBTPvNsmDW9f8AIblF3IRSJlsAAAAASUVORK5CYII=',
     }
   },
 
+  //this provides man readable translation for keyboard keycodes
   _readableKeyCodeMap: {
     8: 'backspace', 9: 'tab', 13: 'enter', 16: 'shift', 17: 'ctrl', 18: 'alt',
     19: 'pause/break', 20: 'caps lock', 27: 'escape', 32: 'space',
@@ -87,9 +117,15 @@ ktg = {
     222: 'single quote'
   },
 
+  //this is set to true by default, meaning it will auto update. You can control
+  //this value during setup.
   _loopUpdateGamepad: true,
+
+  //the analog stick will be considered activated and interpreted as binary
+  //true when it's bigger than this value. (smaller if negative)
   _gamepadDeadzone: 0.4,
 
+  //helper function used to translate the gamepad map.g
   _genericGamepadCheck: function(gamepadCodes){
     var axesbuttons = gamepadCodes[0];
     var n = gamepadCodes[1];
@@ -119,34 +155,11 @@ ktg = {
   },
 
   //128 px width and 16 px height image of each button as 16x16 px image
-  _touchButtonsImageBase64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAAAQCAMAAADphoe6AAAAM1BMVEUAAAAiIDQwYII3lG5LaS9ZVlJbbuFjm/9pampqvjB2QoqbrbesMjLZV2PfcSb42wD//qcPQT4sAAAAAXRSTlMAQObYZgAAAYRJREFUeAGllI2OwiAQhBdYsPan9f2f9uw4azMEc2fui6IDJvMVac0m4ftcBLNVMGuC2SGYTQuoy4tpkEGVXGvkcgfud1DWbdtmsJ2s7XbLN4Av7XgIBwVqisLItRPgBHNKSQS8FL8EVjCHQKNBbiGwP2KkQE2XAHOqKsCJEFhUoOD1FtjQTQEYsJ8CGDBCAH0hwCyFJ1QaC/gp4B8EYMD+EDgvfqcA++oJCrgfVyGWqDQWiCEE5pMQeBmgHwIw4BsC6EsABcg0QGECmMD6ExpTwIs/KT4+A6DxMwT2x/4WQB94CaCOIwSu9dStU6AQH/0FPH8thwANjusu0B3QLdYdiBw6pwBOAPgskHkvXALs5yFM0TcWAImF/D0HCKAfBmMB9NOAAuynAK7xVwEWIifqjAX0ELIfBhBgvwgsfxGILMZjAbCFAPphIM8BEWCfFKiAZkYICBAIKHAxehTXSajfZi+Cz6sw5ybk/RB2q//EO+aO3LF3WGfwfXbBTPvNsmDW9f8AIblF3IRSJlsAAAAASUVORK5CYII=',
-  _touchpadDefinitions: {
-    LEFTSIDE: {
-      TOUCHAREAS: {
-        LEFT:  {  X:   0, Y: 16, W: 16, H: 16 },
-        UP:    {  X:  16, Y:  0, W: 16, H: 16 },
-        RIGHT: {  X:  32, Y: 16, W: 16, H: 16 },
-        DOWN:  {  X:  16, Y: 32, W: 16, H: 16 }
-      },
-      X: 0,
-      Y: 0,
+  //button index follows key enum
+  _touchButtonsImageBase64: {},
 
-      W: 48,
-      H: 48
-    },
-    RIGHTSIDE: {
-      TOUCHAREAS: {
-        BUTTONA: {  X:  16, Y: 32, W: 16, H: 16 },
-        BUTTONB: {  X:  32, Y: 16, W: 16, H: 16 },
-        BUTTONX: {  X:   0, Y: 16, W: 16, H: 16 },
-        BUTTONY: {  X:  16, Y:  0, W: 16, H: 16 }
-      },
-      X: 0,
-      Y: 0,
-      W: 48,
-      H: 48
-    }
-  },
+  //basic touchpad definitions
+  _touchpadDefinitions: {},
 
   _generateTouchpadImage: function(){
     function setpixelated(canvas){
@@ -282,6 +295,8 @@ ktg = {
     ktg.processTouches(e.touches, 'up', 'right');
   },
 
+  //this is where I really handle touches
+  //side tells me which canvas was pressed
   processTouches: function(touches, kind, side) {
     var that = ktg;
 
@@ -436,7 +451,8 @@ ktg = {
   },
 
   //configures the keyboard,touch and gamepad mapping to internal keys
-  setup: function(autoupdategamepad, drawtouch, map){
+  setup: function(autoupdategamepad, drawtouch, autoresize, map){
+    //let's set the initial conditions for every parameter!
     if(typeof drawtouch === 'undefined' || drawtouch === null){
       this._drawtouch = true;
     } else {
@@ -447,11 +463,17 @@ ktg = {
     } else {
       this._loopUpdateGamepad = autoupdategamepad;
     }
+    if(typeof autoresize === 'undefined' || autoresize === null){
+      this._autoresize = true;
+    } else {
+      this._autoresize = autoresize;
+    }
     if(typeof map === 'undefined' || map === null){
       this.map = this._defaultmap;
     } else {
       this.map = map;
     }
+
     //configures keyboard key map to internal keys
     for(var ibutton in this.map.k){
       var keyCodes = this.map.k[ibutton];
@@ -479,10 +501,20 @@ ktg = {
       this._previousTouchpadKeys[kvalue]=false;
     }
 
+
+
+    //do I NEED to draw the touch input?
     if(this._drawtouch){
+      //get image from buttons map
+      this._touchButtonsImageBase64 = this.map.t.base64img
+
+      //set the touchmap
+      this._touchpadDefinitions = this.map.t.tmap
+
       this._buttonsimg = document.createElement('img');
       this._buttonsimg.style.width  = 128;
       this._buttonsimg.style.height = 16;
+      //even though the image is a base64, there's a loading time.
       this._buttonsimg.onload = function(){
         ktg._generateTouchpadImage();
         ktg._placeTouchpadImages();
@@ -497,6 +529,12 @@ ktg = {
         ktg._rTouch.addEventListener('touchstart', ktg.handleTouchDownRight, false);
         ktg._rTouch.addEventListener('touchmove', ktg.handleTouchMoveRight, false);
         ktg._rTouch.addEventListener('touchend', ktg.handleTouchUpRight, false);
+
+        //let's set the drawings to auto resize when needed
+        if(ktg._autoresize){
+          window.addEventListener('resize', ktg.resize, false);
+          window.addEventListener('orientationchange', function(){resize(); setTimeout( ktg.resize,1000);}, false);
+        }
       }
       this._buttonsimg.src = this._touchButtonsImageBase64;
     }
@@ -509,10 +547,13 @@ ktg = {
     }
   },
 
+  //if you need to handle game ui changes depending on last input being from
+  //keyboard or gamepad (or touch), you can read information using this function
   getLastInputType: function(){
     return this._lastInputType;
   },
 
+  //a printable map of the keyboard, may be ueful to present in a menu.
   getPrintableKeyboadMap: function(){
     var text='';
     for(var i=0; i<this._KeysString.length; i++){

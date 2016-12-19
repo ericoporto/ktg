@@ -46,7 +46,7 @@ The possible keys by default are:
 
 ## ktg.setup details
 
-ktg.setup accepts two parameters:
+ktg.setup accepts three parameters:
 
 - `autoupdategamepad` : set this to `false` if you want to place your gamepad
 update in your own loop, to ensure better precision. You will need to manually
@@ -55,9 +55,14 @@ call ktg.updateGamepad(). Default is `true`.
 - `drawtouch` : set to `false`if you don't need the touch input functionality,
 for example, if you detect that your game is in a desktop. Default is `true`.
 
+- `autoresize` : set to `false`if you don't need the on screen touch input to
+autoresize itself, for example, on orientation change (portrait to landscape in
+a phone). You can call ktg.resize manually if autoresize is `false`. Default is
+`true`.
+
 Ex:
 
-`ktg.setup(true, true)`
+`ktg.setup(true, true, true)`
 
 is the same as
 
@@ -66,8 +71,9 @@ is the same as
 ## ktg.resize details
 
 In case your game resizes, for example, by resizing the browser window, or going
-fullscreen, you will need to deal with this. When you deal, just ensure to call
-`ktg.resize()` to guarantee it will resize the touch input appropriately.
+fullscreen, you will need to deal with this - assuming you set autoresize to
+`false`. When you deal, just ensure to call `ktg.resize()` to guarantee it will
+resize the touch input appropriately.
 
 ![](screenshot.png)
 
